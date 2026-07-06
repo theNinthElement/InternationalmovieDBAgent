@@ -34,18 +34,4 @@ For coding and adding graphs I used Claude for generating the initial file struc
 
 ## Architecture
 
-```
-                        ┌─────────────┐
-             ┌─────────▶│ supervisor  │◀─────────┐
-             │          └──────┬──────┘          │
-             │                 │ routes to one     │
-             │        ┌────────┼────────┐         │
-             │        ▼        ▼        ▼         │
-             │   sql_agent  rag_agent  research_agent
-             │        │        │        │         │
-             └────────┴────────┴────────┴─────────┘
-                                │
-                       supervisor says FINISH
-                                ▼
-                          final_answer ──▶ END
-```
+look for MovieAgent.png file
