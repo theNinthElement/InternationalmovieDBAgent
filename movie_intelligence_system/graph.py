@@ -34,7 +34,7 @@ routing is entirely LLM-driven.
 import functools
 from typing import Annotated, Literal, Sequence, TypedDict
 
-from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
@@ -64,6 +64,10 @@ The SQL database and the description corpus cover the same 100 movies and \
 share Movie IDs (101-200), so an ID or title found by one agent can be used \
 directly by the other.
 
+If the user's question has nothing to do with movies (not answerable via \
+the SQL database, the plot/description corpus, or movie-related web \
+research), route to OFF_TOPIC immediately instead of calling a specialist.
+
 Given the conversation so far, decide who should act next. Route to exactly \
 one specialist per turn. Only choose FINISH once every part of the user's \
 original question has actually been answered by the specialists' outputs \
@@ -81,7 +85,7 @@ class AgentState(TypedDict):
 
 
 class RouteDecision(BaseModel):
-    next: Literal["sql_agent", "rag_agent", "research_agent", "FINISH"]
+    next: Literal["sql_agent", "rag_agent", "research_agent", "OFF_TOPIC", "FINISH"]
 
 
 def _agent_node(state: AgentState, agent, name: str):
@@ -96,6 +100,15 @@ def _supervisor_node(state: AgentState, llm):
     messages = [SystemMessage(content=SUPERVISOR_PROMPT)] + list(state["messages"])
     decision = llm.with_structured_output(RouteDecision).invoke(messages)
     return {"next": decision.next}
+
+
+def _off_topic_node(state: AgentState):
+    message = (
+        "I can only answer questions about the movies in this system "
+        "(plot, cast, financials, directors, trivia). Try rephrasing your "
+        "question around a movie."
+    )
+    return {"messages": [AIMessage(content=message)]}
 
 
 def _final_answer_node(state: AgentState, llm):
@@ -122,6 +135,7 @@ def build_graph():
         "research_agent", functools.partial(_agent_node, agent=research_agent, name="research_agent")
     )
     workflow.add_node("final_answer", functools.partial(_final_answer_node, llm=llm))
+    workflow.add_node("off_topic_node", _off_topic_node)
 
     workflow.add_edge(START, "supervisor")
     for member in MEMBERS:
@@ -130,9 +144,10 @@ def build_graph():
     workflow.add_conditional_edges(
         "supervisor",
         lambda state: state["next"],
-        {**{m: m for m in MEMBERS}, "FINISH": "final_answer"},
+        {**{m: m for m in MEMBERS}, "FINISH": "final_answer", "OFF_TOPIC": "off_topic_node"},
     )
     workflow.add_edge("final_answer", END)
+    workflow.add_edge("off_topic_node", END)
 
     # MemorySaver gives the CLI/Streamlit apps multi-turn memory (follow-up
     # questions like "what about its sequel?") for free, keyed by thread_id.

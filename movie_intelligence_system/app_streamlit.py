@@ -1,18 +1,11 @@
-"""
-Optional Streamlit UI (the assignment lists a UI as optional; this is a thin
-wrapper around the same build_graph() used by app_cli.py - no separate logic
-to keep in sync).
-
-Run: streamlit run app_streamlit.py
-"""
 import streamlit as st
 from langchain_core.messages import HumanMessage
 
 from graph import build_graph
 
-st.set_page_config(page_title="Movie Intelligence System", page_icon="🎬")
-st.title("🎬 Movie Intelligence System")
-st.caption("SQL analytics + RAG plot search + live web research, orchestrated with LangGraph.")
+st.set_page_config(page_title="International Movie Database Agent", page_icon="🎬")
+st.title("🎬 International Movie Database Agent")
+# st.caption("SQL analytics + RAG plot search + live web research, orchestrated with LangGraph.")
 
 if "graph" not in st.session_state:
     with st.spinner("Loading agents..."):

@@ -1,8 +1,3 @@
-"""
-Simple command-line chat interface for the movie intelligence system.
-
-Run: python app_cli.py
-"""
 from langchain_core.messages import HumanMessage
 
 from graph import build_graph
@@ -15,7 +10,7 @@ def main():
     graph = build_graph()
     config = {"configurable": {"thread_id": THREAD_ID}, "recursion_limit": 25}
 
-    print("\nMovie Intelligence System - ask me anything about the movie catalog.")
+    print("\nInternational Movie Database Agent - ask me anything about the movie catalog.")
     print("Type 'exit' to quit.\n")
 
     while True:
