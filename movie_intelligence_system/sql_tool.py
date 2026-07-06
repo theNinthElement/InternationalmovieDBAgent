@@ -1,13 +1,3 @@
-"""
-SQL specialist agent: answers analytical questions over the structured movie
-database (movies, financials, actors, movie_actor, languages).
-
-Design choice: rather than hand-writing SQL myself, I hand the agent the
-standard LangChain SQLDatabaseToolkit (list_tables, get_schema, query,
-query_checker) and let it introspect the schema at run time. That means it
-keeps working even if column names differ slightly from what's described in
-the assignment brief, and it self-corrects malformed SQL via the checker tool.
-"""
 from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
 from langgraph.prebuilt import create_react_agent

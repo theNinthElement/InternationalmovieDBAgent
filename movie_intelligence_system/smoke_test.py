@@ -1,14 +1,3 @@
-"""
-Smoke test: runs the three example questions from the assignment brief
-through the full graph and prints which agents were consulted for each.
-
-Run after `python ingestion.py`:  python smoke_test.py
-
-Useful right before the live demo to confirm routing behaves as expected:
-  Q1 -> sql_agent only
-  Q2 -> rag_agent only
-  Q3 -> rag_agent -> sql_agent -> research_agent (order may vary slightly)
-"""
 from langchain_core.messages import HumanMessage
 
 from graph import build_graph

@@ -1,36 +1,3 @@
-"""
-LangGraph multi-agent supervisor.
-
-Architecture
-------------
-                        ┌─────────────┐
-             ┌─────────▶│ supervisor  │◀─────────┐
-             │          └──────┬──────┘          │
-             │                 │ routes to one    │
-             │        ┌────────┼────────┐         │
-             │        ▼        ▼        ▼         │
-             │   sql_agent  rag_agent  research_agent
-             │        │        │        │         │
-             └────────┴────────┴────────┴─────────┘
-                                │
-                        supervisor says FINISH
-                                ▼
-                          final_answer ──▶ END
-
-A supervisor LLM node looks at the conversation so far and decides which
-specialist should act next. Each specialist is itself a small LangGraph
-ReAct agent (an LLM bound to its own tool(s)). Control always returns to the
-supervisor after a specialist runs, so multi-hop questions - e.g. "which
-movie is about X, when was it released, and who produced it?" - are handled
-by chaining rag_agent -> sql_agent -> research_agent, each adding a piece of
-the answer, before the supervisor calls FINISH. A final synthesis step then
-turns the accumulated findings into one clean, user-facing answer.
-
-This keeps single-capability questions cheap (one specialist, one supervisor
-round-trip) while letting genuinely compound questions collaborate across
-agents without any hand-coded "if multi-part question" branching logic - the
-routing is entirely LLM-driven.
-"""
 import functools
 from typing import Annotated, Literal, Sequence, TypedDict
 

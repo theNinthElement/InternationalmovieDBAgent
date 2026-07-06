@@ -1,19 +1,3 @@
-"""
-One-time step: parse RAG_movies.pdf into per-movie documents and embed them
-into a local Chroma vector store for the RAG agent to search.
-
-Run: python ingestion.py
-
-Parser notes (verified against the actual assignment PDF):
-- pypdf extracts this PDF with a newline between almost every word and the
-  field labels inline, so we normalize ALL whitespace to single spaces first,
-  then parse field-by-field. All 100 records (IDs 101-200) parse with all
-  four fields present.
-- Page numbers at page breaks occasionally glue onto the next word
-  ("...guidance, 1seeking..."), so we strip a 1-2 digit number fused to the
-  start of a lowercase word (while protecting ordinals like "85th"), plus
-  stray trailing page numbers on field values.
-"""
 import re
 
 from langchain_core.documents import Document

@@ -1,13 +1,3 @@
-"""
-RAG specialist agent: semantic search over the 100 detailed movie
-descriptions extracted from RAG_movies.pdf (see ingestion.py), embedded into
-a local Chroma vector store.
-
-Design choice: wrapped as a small ReAct agent (rather than a fixed
-retrieve-then-answer chain) so it can re-query with a refined phrase if the
-first search misses, e.g. broadening "a man who fights a rules-based
-underground club" -> "underground fight club Project Mayhem".
-"""
 import os
 
 from langchain_core.tools.retriever import create_retriever_tool

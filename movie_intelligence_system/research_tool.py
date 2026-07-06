@@ -1,13 +1,3 @@
-"""
-Research specialist agent: live web search for information that lives
-outside both the SQL database and the movie description corpus - directors,
-producers, studios, awards, real-world background, recent news.
-
-Uses DuckDuckGo search by default because it needs no API key, which keeps
-the whole system runnable with zero signup friction for a timed take-home.
-Swap in Tavily (commented below) for higher-quality, more structured results
-if you have a key.
-"""
 from langchain_community.tools import DuckDuckGoSearchRun
 from langgraph.prebuilt import create_react_agent
 
